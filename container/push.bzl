@@ -111,6 +111,8 @@ def _impl(ctx):
     if toolchain_info.client_config != "":
         pusher_args += [" --client-config-dir {}".format(toolchain_info.client_config)]
 
+    print('maigl: ' + pusher_args)
+
     ctx.actions.expand_template(
         template = ctx.file._tag_tpl,
         substitutions = {
