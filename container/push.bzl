@@ -112,19 +112,17 @@ def _impl(ctx):
     if toolchain_info.client_config != "":
         pusher_args += [" --client-config-dir {}".format(toolchain_info.client_config)]
 
-    print('maigl: ' + pusher_args)
-
     ctx.actions.expand_template(
         template = ctx.file._tag_tpl,
         substitutions = {
             "%{args}": " ".join(pusher_args),
-            "%{container_pusher}": _get_runfile_path(ctx, ctx.executable._pusher),
+            "%{container_pusher}": _get_runfile_path(ctx, ctx.executable.pusher),
         },
         output = ctx.outputs.executable,
         is_executable = True,
     )
-    runfiles = ctx.runfiles(files = [ctx.executable._pusher] + image_files + stamp_inputs + runfiles_tag_file)
-    runfiles = runfiles.merge(ctx.attr._pusher[DefaultInfo].default_runfiles)
+    runfiles = ctx.runfiles(files = [ctx.executable.pusher] + image_files + stamp_inputs + runfiles_tag_file)
+    runfiles = runfiles.merge(ctx.attr.pusher[DefaultInfo].default_runfiles)
 
     return [
         DefaultInfo(
@@ -182,7 +180,7 @@ container_push = rule(
             cfg = "host",
             executable = True,
         ),
-        "_pusher": attr.label(
+        "pusher": attr.label(
             default = Label("@containerregistry//:pusher"),
             cfg = "host",
             executable = True,
